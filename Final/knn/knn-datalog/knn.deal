@@ -1,0 +1,28 @@
+% Schema
+database({
+train(Id:integer,Col:integer,Val:float),
+labels(Id: integer, Class:integer),
+test(Id:integer,Col:integer,Val:float)
+}).
+
+%Rules
+squares(Id,Tid,Col,C) <- test(Id,Col,V1),train(Tid,Col,V2),C=(V1-V2)*(V1-V2).
+sumsq(Id,Tid,sum<C>) <- squares(Id,Tid,Col,C).
+msumsq(Id,Tid) <- sumsq(Id,Tid,C).
+                                  
+
+btw(Id,Tid1,Tid3) <- msumsq(Id,Tid1),msumsq(Id,Tid2),msumsq(Id,Tid3),sumsq(Id,Tid1,V1),sumsq(Id,Tid2,V2),sumsq(Id,Tid3,V3),V1<V2,V2<V3.
+smaller(Id,Tid) <- sumsq(Id,Tid,V),sumsq(Id,Tid1,V1),V1<V.
+topk(Id,Tid,V,1) <- sumsq(Id,Tid,V),~smaller(Id,Tid).
+topk(Id,Tid2,V2,K1) <- topk(Id,Tid1,V1,K),sumsq(Id,Tid2,V2),V2>V1,~btw(Id,Tid1,Tid2),K1=K+1.
+
+finaltopk(Id,Tid,1) <- msumsq(Id,Tid),~smaller(Id,Tid).
+finaltopk(Id,Tid2,K1) <- sumsq(Id,Tid1,V1),sumsq(Id,Tid2,V2),finaltopk(Id,Tid1,K),V2>V1,~btw(Id,Tid1,Tid2),K1=K+1,K1<=5.
+
+topklabels(Id,Tid,L) <- finaltopk(Id,Tid,C),labels(Tid,L).
+
+countlabels(Id,L,count<Tid>) <- topklabels(Id,Tid,L). 
+maxcount(Id,max<C>) <- countlabels(Id,L,C).
+
+predicted(Id,L) <- countlabels(Id,L,C1),maxcount(Id,C2),C1=C2.
+

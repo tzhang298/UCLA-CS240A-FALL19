@@ -1,0 +1,6 @@
+
+== rasql suite ==
+knn: -traindata=testdata/TRAINDATA.csv -testdata=testdata/TESTDATA.csv -TESTLAB=testdata/labels.csv
+
+nbc&test: -TEST_DATASET = testdata/TEST_DATASET.csv -TRAIN_DATASET = testdata/TRAIN_DATASET.csv
+

@@ -1,0 +1,2 @@
+1. python3 NBpreprocess.py to create the file that has readable format. 
+2. The syntax problems happened on RaSQL system so that I am not able to proceed to next step on RaSQL system. But i have written my code on other platform that works well. 
